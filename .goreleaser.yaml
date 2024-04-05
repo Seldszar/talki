@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+
+builds:
+  - binary: talki
+
+    env:
+      - CGO_ENABLED=0
+
+archives:
+  - id: talki
+
+    format_overrides:
+      - goos: windows
+        format: zip
+
+    files:
+      - LICENSE.md
+      - CHANGELOG.md
+
+changelog:
+  disable: true
+
+release:
+  mode: "keep-existing"
