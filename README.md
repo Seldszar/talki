@@ -12,23 +12,30 @@ A video demonstration is available here: https://twitter.com/0xSeldszar/status/1
 - [Go](https://go.dev)
 - [Node.js](https://nodejs.org)
 
+## Build
+
+```sh
+$ make all
+```
+
 ## Usage
 
+After buildng the program, run the binary corresponding on your platform, for example on Windows:
+
 ```sh
-$ go run main.go --help
+$ talki-windows-amd64.exe
 ```
 
-In case you want to use the provided theme, go to the `public` folder and build the web project with the following commands:
+If you want to use a custom public path, add a `--public` flag with the path to your folder:
 
 ```sh
-$ npm install
-$ npm run build
+$ talki-windows-amd64.exe --public="my-widget/dist"
 ```
 
-Then run the application with the following `public` flag:
+You can find all available flags by adding the `--help` flag:
 
 ```sh
-$ go run main.go --public="public/dist"
+$ talki-windows-amd64.exe --help
 ```
 
 ## License

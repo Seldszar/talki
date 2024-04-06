@@ -1,7 +1,9 @@
 package main
 
 import (
+	"embed"
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -40,6 +42,9 @@ var (
 	}
 
 	clients = collection.NewSet[*websocket.Conn]()
+
+	//go:embed all:public/dist
+	publicFS embed.FS
 )
 
 func manageEvents(client *discord.Client, cmd, channelID string) {
@@ -190,6 +195,20 @@ func connectDiscord() error {
 	}
 }
 
+func getPublicFS(root string) (http.FileSystem, error) {
+	if root == "" {
+		fs, err := fs.Sub(publicFS, "public/dist")
+
+		if err != nil {
+			return nil, err
+		}
+
+		return http.FS(fs), nil
+	}
+
+	return http.Dir(root), nil
+}
+
 func main() {
 	app := &cli.App{
 		Flags: []cli.Flag{
@@ -200,13 +219,17 @@ func main() {
 			},
 			&cli.StringFlag{
 				Name:  "public",
-				Usage: "Path to the folder serving web assets",
-				Value: "public",
+				Usage: "Optional path to the folder serving web assets",
 			},
 		},
 		Action: func(ctx *cli.Context) error {
-			http.Handle("/", http.FileServer(http.Dir(ctx.String("public"))))
+			fs, err := getPublicFS(ctx.String("public"))
 
+			if err != nil {
+				return err
+			}
+
+			http.Handle("/", http.FileServer(fs))
 			http.HandleFunc("/socket", func(w http.ResponseWriter, r *http.Request) {
 				conn, err := upgrader.Upgrade(w, r, nil)
 
