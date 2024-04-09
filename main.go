@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/urfave/cli/v2"
@@ -195,6 +196,19 @@ func connectDiscord() error {
 	}
 }
 
+func loopDiscord() error {
+	for {
+		err := connectDiscord()
+
+		if err != nil {
+			log.Printf("An error occured with Discord client: %s", err.Error())
+		}
+
+		log.Println("Reconnecting in 3 seconds...")
+		time.Sleep(3 * time.Second)
+	}
+}
+
 func getPublicFS(root string) (http.FileSystem, error) {
 	if root == "" {
 		fs, err := fs.Sub(publicFS, "public/dist")
@@ -251,7 +265,7 @@ func main() {
 				<-ctx.Done()
 			})
 
-			go connectDiscord()
+			go loopDiscord()
 
 			log.Printf("Server is listening to port %d", ctx.Int("port"))
 			log.Printf("Widget is available at http://localhost:%d", ctx.Int("port"))
