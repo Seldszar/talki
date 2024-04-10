@@ -4,7 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -113,6 +113,8 @@ func connectDiscord() error {
 		return err
 	}
 
+	slog.Info("Connected to Discord client")
+
 	for {
 		var res discord.Response
 
@@ -201,10 +203,13 @@ func loopDiscord() error {
 		err := connectDiscord()
 
 		if err != nil {
-			log.Printf("An error occured with Discord client: %s", err.Error())
+			slog.Error(
+				"An error occured with Discord client",
+				"error", err.Error(),
+			)
 		}
 
-		log.Println("Reconnecting in 3 seconds...")
+		slog.Info("Disconnected from Discord, reconnecting in 3 seconds...")
 		time.Sleep(3 * time.Second)
 	}
 }
@@ -267,8 +272,10 @@ func main() {
 
 			go loopDiscord()
 
-			log.Printf("Server is listening to port %d", ctx.Int("port"))
-			log.Printf("Widget is available at http://localhost:%d", ctx.Int("port"))
+			slog.Info(
+				"Server is ready",
+				"address", fmt.Sprintf("http://localhost:%d", ctx.Int("port")),
+			)
 
 			if err := http.ListenAndServe(fmt.Sprintf(":%d", ctx.Int("port")), nil); err != nil {
 				return err
@@ -279,6 +286,9 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err)
+		slog.Error(
+			"An error occured with the application",
+			"error", err.Error(),
+		)
 	}
 }
