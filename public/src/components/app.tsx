@@ -11,10 +11,15 @@ export function App() {
     [location.search],
   );
 
+  const filteredSpeakers = useMemo(
+    () => searchParams.get("limit_speaking") ? speakers.filter((speaker) => speaker.speaking) : speakers,
+    [searchParams, speakers],
+  );
+
   return (
     <div class="Voice_voiceContainer__adk9M voice_container">
       <ul class="Voice_voiceStates__a121W voice_states">
-        {speakers.map((speaker) => (
+        {filteredSpeakers.map((speaker) => (
           <li key={speaker.id} class={cx("Voice_voiceState__OCoZh voice_state", speaker.speaking && "wrapper_speaking")} data-userid={speaker.id}>
             <img class={cx("Voice_avatar__htiqH voice_avatar", speaker.speaking && "Voice_avatarSpeaking__lE+4m")} src={speaker.avatarUrl} />
             <div class="Voice_user__8fGwX voice_username">
