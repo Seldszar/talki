@@ -10,7 +10,7 @@ export function useSpeakers() {
     const url = new URL("/socket", location.href.replace("http", "ws"));
 
     let socket: WebSocket | undefined;
-    let timeoutId: NodeJS.Timeout | undefined;
+    let timeoutId: number | undefined;
 
     const connect = () => {
       socket?.close(1_000);
