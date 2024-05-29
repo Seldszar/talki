@@ -3,8 +3,12 @@
 builds:
   - binary: talki
 
-    env:
-      - CGO_ENABLED=0
+    goos:
+      - windows
+      - linux
+
+    ldflags:
+      - -s -w -H=windowsgui
 
 archives:
   - id: talki

@@ -7,11 +7,15 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"os/exec"
+	"runtime"
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/jimbertools/systray"
 	"github.com/urfave/cli/v2"
 
+	"github.com/seldszar/talki/autorun"
 	"github.com/seldszar/talki/collection"
 	"github.com/seldszar/talki/discord"
 )
@@ -46,7 +50,28 @@ var (
 
 	//go:embed all:public/dist
 	publicFS embed.FS
+
+	//go:embed icon.ico
+	iconBytes []byte
 )
+
+func openURL(url string) error {
+	switch runtime.GOOS {
+	case "linux":
+		return exec.Command("xdg-open", url).
+			Start()
+
+	case "windows":
+		return exec.Command("rundll32", "url.dll,FileProtocolHandler", url).
+			Start()
+
+	case "darwin":
+		return exec.Command("open", url).
+			Start()
+	}
+
+	return fmt.Errorf("cannot open url %s on this platform", url)
+}
 
 func manageEvents(client *discord.Client, cmd, channelID string) {
 	if channelID == "" {
@@ -214,6 +239,60 @@ func loopDiscord() error {
 	}
 }
 
+func loopTrayIcon(ctx *cli.Context) error {
+	ex, err := os.Executable()
+
+	if err != nil {
+		return err
+	}
+
+	ar := &autorun.AutoRun{
+		Name:        "Talki",
+		DisplayName: "Talki: Custom Discord Widget",
+		Executable:  ex,
+	}
+
+	systray.Run(
+		func() {
+			systray.SetTitle("Talki: Custom Discord Widget")
+			systray.SetTooltip("Talki: Custom Discord Widget")
+			systray.SetIcon(iconBytes)
+
+			openItem := systray.AddMenuItem("Open Widget Page", "")
+			autorunItem := systray.AddMenuItemCheckbox("Start at Launch", "", ar.IsEnabled())
+			closeItem := systray.AddMenuItem("Close", "")
+
+			for {
+				select {
+				case <-openItem.ClickedCh:
+					openURL(fmt.Sprintf("http://localhost:%d", ctx.Int("port")))
+
+				case <-autorunItem.ClickedCh:
+					if ar.IsEnabled() {
+						if err := ar.Disable(); err == nil {
+							autorunItem.Uncheck()
+						}
+
+						break
+					}
+
+					if err := ar.Enable(); err == nil {
+						autorunItem.Check()
+					}
+
+				case <-closeItem.ClickedCh:
+					systray.Quit()
+				}
+			}
+		},
+		func() {
+			os.Exit(0)
+		},
+	)
+
+	return nil
+}
+
 func getPublicFS(root string) (http.FileSystem, error) {
 	if root == "" {
 		fs, err := fs.Sub(publicFS, "public/dist")
@@ -271,6 +350,7 @@ func main() {
 			})
 
 			go loopDiscord()
+			go loopTrayIcon(ctx)
 
 			slog.Info(
 				"Server is ready",
