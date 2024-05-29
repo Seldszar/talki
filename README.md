@@ -26,6 +26,8 @@ After buildng the program, run the binary corresponding on your platform, for ex
 $ talki-windows-amd64.exe
 ```
 
+An icon should be added to your system tray, from which you can open its menu and widget page and more.
+
 If you want to use a custom public path, add a `--public` flag with the path to your folder:
 
 ```sh
