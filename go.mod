@@ -7,7 +7,6 @@ require (
 	github.com/gorilla/websocket v1.5.1
 	github.com/jimbertools/systray v0.0.0-20240321145021-759ab3352af6
 	github.com/urfave/cli/v2 v2.27.2
-	golang.org/x/sys v0.20.0
 )
 
 require (
@@ -17,4 +16,5 @@ require (
 	github.com/tevino/abool v1.2.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	golang.org/x/net v0.25.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
 )

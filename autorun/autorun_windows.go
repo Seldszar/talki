@@ -3,52 +3,48 @@
 
 package autorun
 
+// #cgo LDFLAGS: -lole32 -luuid
+/*
+#define WIN32_LEAN_AND_MEAN
+
+#include <stdint.h>
+#include <windows.h>
+
+char CreateShortcut(char *shortcutA, char *path, char *args);
+*/
+import "C"
+
 import (
-	"golang.org/x/sys/windows/registry"
+	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
 )
 
-func (a *AutoRun) Enable() error {
-	key, err := registry.OpenKey(registry.CURRENT_USER, `SOFTWARE\Microsoft\Windows\CurrentVersion\Run`, registry.WRITE)
+var startupDir = filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Roaming", "Microsoft", "Windows", "Start Menu", "Programs", "Startup")
 
-	if err != nil {
+func (a *AutoRun) path() string {
+	return filepath.Join(startupDir, fmt.Sprintf("%s.lnk", a.Name))
+}
+
+func (a *AutoRun) Enable() error {
+	if err := os.MkdirAll(startupDir, 0777); err != nil {
 		return err
 	}
 
-	defer key.Close()
-
-	if err = key.SetStringValue(a.Name, a.Executable); err != nil {
-		return err
+	if res := C.CreateShortcut(C.CString(a.path()), C.CString(a.Executable), C.CString("")); res != 0 {
+		return errors.New("unable to create shortcut")
 	}
 
 	return nil
 }
 
 func (a *AutoRun) Disable() error {
-	key, err := registry.OpenKey(registry.CURRENT_USER, `SOFTWARE\Microsoft\Windows\CurrentVersion\Run`, registry.WRITE)
-
-	if err != nil {
-		return err
-	}
-
-	defer key.Close()
-
-	if err = key.DeleteValue(a.Name); err != nil {
-		return err
-	}
-
-	return nil
+	return os.Remove(a.path())
 }
 
 func (a *AutoRun) IsEnabled() bool {
-	key, err := registry.OpenKey(registry.CURRENT_USER, `SOFTWARE\Microsoft\Windows\CurrentVersion\Run`, registry.READ)
-
-	if err != nil {
-		return false
-	}
-
-	defer key.Close()
-
-	if _, _, err := key.GetStringValue(a.Name); err != nil {
+	if _, err := os.Stat(a.path()); err != nil {
 		return false
 	}
 
