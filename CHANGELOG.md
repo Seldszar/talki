@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/Seldszar/talki/compare/v1.1.0...v1.1.1) (2024-05-31)
+
+
+### Bug Fixes
+
+* update windows autorun to prevent false positive ([8ea8cdc](https://github.com/Seldszar/talki/commit/8ea8cdc57068a96dedc33a421592e0df3d34c3ab))
+
 ## [1.1.0](https://github.com/Seldszar/talki/compare/v1.0.0...v1.1.0) (2024-05-31)
 
 
