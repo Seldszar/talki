@@ -5,6 +5,13 @@
 
 ### Features
 
+* systray & autorun ([bb1b7e4](https://github.com/Seldszar/talki/commit/bb1b7e4c84ad7facf4b06cc87a7f8520be956a26))
+
+## [1.1.0](https://github.com/Seldszar/talki/compare/v1.0.0...v1.1.0) (2024-05-31)
+
+
+### Features
+
 * systray & autorun ([7e70421](https://github.com/Seldszar/talki/commit/7e70421b2eb399def9e4c42df0cea71af1cd6ebc))
 
 ## 1.0.0 (2024-05-24)
