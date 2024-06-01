@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/Seldszar/talki/compare/v1.1.0...v1.1.1) (2024-06-01)
+
+
+### Bug Fixes
+
+* properly hide the console window ([7c7b7f4](https://github.com/Seldszar/talki/commit/7c7b7f48ea8fdcff8fb1129adb9d4c69a69ef0b5))
+
 ## [1.1.0](https://github.com/Seldszar/talki/compare/v1.0.0...v1.1.0) (2024-06-01)
 
 
