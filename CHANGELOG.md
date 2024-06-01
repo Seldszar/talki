@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/Seldszar/talki/compare/v1.0.0...v1.1.0) (2024-06-01)
+
+
+### Features
+
+* systray & autorun ([5af652b](https://github.com/Seldszar/talki/commit/5af652ba5a6ff53f7f9da65897bcf62ed87cd810))
+
 ## [1.1.0](https://github.com/Seldszar/talki/compare/v1.0.0...v1.1.0) (2024-05-31)
 
 
