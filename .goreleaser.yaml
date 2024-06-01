@@ -7,10 +7,12 @@ builds:
       - windows
       - linux
 
-    overrides:
-      - goos: windows
-        ldflags:
-          - -H windowsgui
+    ldflags:
+      - -s -w
+      - >-
+        {{- if eq .Os "windows" }}
+          -H windowsgui
+        {{- end }}
 
 archives:
   - id: talki
